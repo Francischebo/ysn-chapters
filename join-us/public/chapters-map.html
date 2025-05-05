@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YSN University Chapters Map</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" /> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        /* Header Styles */
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo img {
+            height: 50px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            font-weight: 500;
+            color: var(--dark);
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 99%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .map-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .map-header h1 {
+            font-size: 2rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .map-header p {
+            color: #64748b;
+        }
+        
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .legend {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 1.5rem;
+        }
+        
+        .legend h3 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .legend-label {
+            font-size: 0.9rem;
+        }
+        
+        .university-info h2 {
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        
+        .university-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .university-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .university-initiatives {
+            margin-top: 0.75rem;
+        }
+        
+        .university-initiatives h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        
+        .initiative-list {
+            list-style: none;
+        }
+        
+        .initiative-list li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.3rem;
+        }
+        
+        .initiative-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff7700;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="assets/images/ysn-logo.jpg" alt="YSN Logo">
+                <h1>Youth Synergy Network</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="programs.html">Programs</a></li>
+                    <li><a href="program-details.html">Impacts</a></li>
+                    <li><a href="chapters.html">Chapters</a></li>
+                    <li><a href="leadership.html">Leadership</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="news.html">News</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="resources.html">Resources</a></li>
+                    <li><a href="testimonials.html">Testimonials</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li class="nav-buttons"><a href="#" class="btn btn-outline">Donate</a></li>
+                    <li class="nav-buttons"><a href="#" class="btn btn-primary">Join Us</a></li>
+                </ul>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="map-header">
+            <h1>Youth Synergy Network University Chapters</h1>
+            <p>Explore our network of chapters across Kenya's universities</p>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="legend">
+            <h3>Chapter Establishment Timeline</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff7700;"></div>
+                    <div class="legend-label">Original Chapters (Est. 2021)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #1e3a8a;"></div>
+                    <div class="legend-label">Expansion Chapters (Est. 2022)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #10b981;"></div>
+                    <div class="legend-label">New Chapters (Est. 2023)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="container ">
+            <div class="footer-content ">
+                <div class="footer-about ">
+                    <div class="footer-logo ">
+                        <img src="assets/images/ysn-logo.jpg " alt="YSN Logo ">
+                        <h2>Youth Synergy Network</h2>
+                    </div>
+                    <p>Empowering youth to become leaders in legal literacy, climate action, mental health awareness, and community service.</p>
+                    <h3>Social Media Links</h3>
+                    <div class="social-links ">
+                        <a href="https://www.facebook.com/profile.php?id=61575320623640" class="social-icon ">Facebook</a>
+                        <a href="# " class="social-icon ">X Platform</a>
+                        <a href="https://www.linkedin.com/in/youth-synergy-network-51b538362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-icon ">LinkedIn</a>
+                        <a href="tiktok.com/@youth.synergy.net" class="social-icon ">Tiktok</a>
+                        <a href="https://www.instagram.com/youth_synergynework?igsh=Mmx1eHM4NGdycjFu" class="social-icon ">Instagram</a>
+                    </div>
+                </div>
+
+                <div class="footer-links ">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html ">Home</a></li>
+                        <li><a href="about.html ">About Us</a></li>
+                        <li><a href="programs.html ">Overview Programs</a></li>
+                        <li><a href="program-details.html ">Detailed Programs</a></li>
+                        <li><a href="leadership.html ">Leadership</a></li>
+                        <li><a href="chapters.html ">University Chapters</a></li>
+                        <li><a href="events.html ">Events</a></li>
+                        <li><a href="resources.html ">Resources</a></li>
+                        <li><a href="media.html ">Media Center</a></li>
+                        <li><a href="blog.html ">Blog</a></li>
+                        <li><a href="contact.html ">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links ">
+                    <h3>Programs</h3>
+                    <ul>
+                        <li><a href="# ">Legal Literacy</a></li>
+                        <li><a href="# ">Mental Health</a></li>
+                        <li><a href="# ">Climate Action</a></li>
+                        <li><a href="# ">Mentorship</a></li>
+                        <li><a href="# ">Sanitary Dignity</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-subscribe ">
+                    <h3>Stay Updated</h3>
+                    <p>Subscribe to our newsletter for updates on our programs and impact stories.</p>
+                    <form class="subscribe-form ">
+                        <input type="email " class="subscribe-input " placeholder="Your email address ">
+                        <button type="submit " class="subscribe-btn ">→</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom ">
+                <p>&copy; 2025 Youth Synergy Network. All Rights Reserved.</p>
+                <p>Developer: Francis founder of
+                    <i><a href="#">Mobet Tech Space Solutions</a></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize map centered on Kenya
+        const map = L.map('map').setView([-1.2921, 36.8219], 7);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Define university chapter data with coordinates, establishment years, and other info
+        const universities = [{
+            name: "University of Nairobi",
+            chapterName: "UoN Synergy Chapter",
+            coordinates: [-1.2800, 36.8219],
+            established: 2021,
+            members: "150+",
+            description: "The flagship chapter with a strong focus on constitutional literacy and environmental law advocacy.",
+            initiatives: [
+                "Weekly legal literacy clinics",
+                "Campus tree planting campaign",
+                "Mental health peer counseling",
+                "High school mentorship program"
+            ]
+        }, {
+            name: "Kenyatta University",
+            chapterName: "KU Synergy Leaders",
+            coordinates: [-1.1799, 36.9355],
+            established: 2022,
+            members: "120+",
+            description: "Known for their innovative approach to period dignity and menstrual health education.",
+            initiatives: [
+                "Monthly sanitary pad drives",
+                "Gender rights awareness forums",
+                "Environmental justice campaigns",
+                "Community legal aid outreach"
+            ]
+        }, {
+            name: "Strathmore University",
+            chapterName: "Strathmore Synergy Hub",
+            coordinates: [-1.3116, 36.8110],
+            established: 2022,
+            members: "85+",
+            description: "Leveraging the university's strength in business and law, focused on legal entrepreneurship.",
+            initiatives: [
+                "Legal innovation hackathons",
+                "Climate leadership academy",
+                "Corporate sustainability partnerships",
+                "Mental wellness workshops"
+            ]
+        }, {
+            name: "Moi University",
+            chapterName: "Moi YSN Chapter",
+            coordinates: [0.5143, 35.2715],
+            established: 2023,
+            members: "95+",
+            description: "Spearheading rural outreach initiatives with strong connections to schools in Eldoret.",
+            initiatives: [
+                "Rural school adoption program",
+                "Mental health healing circles",
+                "Indigenous environmental knowledge preservation",
+                "Constitutional literacy in mother tongues"
+            ]
+        }, {
+            name: "Jomo Kenyatta University",
+            chapterName: "JKUAT Synergy Hub",
+            coordinates: [-1.0922, 37.0127],
+            established: 2021,
+            members: "110+",
+            description: "Utilizes technology and innovation to address environmental challenges.",
+            initiatives: [
+                "Tech for climate solutions",
+                "Digital legal literacy apps",
+                "Engineering for sustainable communities",
+                "Mental health technology solutions"
+            ]
+        }, {
+            name: "Maseno University",
+            chapterName: "Maseno Change Makers",
+            coordinates: [0.0075, 34.5997],
+            established: 2022,
+            members: "75+",
+            description: "Located in western Kenya focusing on community initiatives around Lake Victoria.",
+            initiatives: [
+                "Lake Victoria conservation efforts",
+                "Rural legal awareness campaigns",
+                "Adolescent mental health support",
+                "Girls education advocacy"
+            ]
+        }, {
+            name: "Egerton University",
+            chapterName: "Egerton Environmental Leaders",
+            coordinates: [-0.3672, 35.9283],
+            established: 2021,
+            members: "90+",
+            description: "Agricultural and environmental focus leveraging the university's research capabilities.",
+            initiatives: [
+                "Sustainable farming practices",
+                "Food security legal frameworks",
+                "Rural environmental justice",
+                "Farmer mental health outreach"
+            ]
+        }, {
+            name: "Technical University of Kenya",
+            chapterName: "TUK Innovators",
+            coordinates: [-1.2929, 36.8172],
+            established: 2023,
+            members: "65+",
+            description: "Bringing technical solutions to social challenges with engineering innovation.",
+            initiatives: [
+                "Eco-friendly design competitions",
+                "Reusable sanitary product innovation",
+                "Legal tech hackathons",
+                "Engineering for mental health"
+            ]
+        }, {
+            name: "Mount Kenya University",
+            chapterName: "MKU Synergy Chapter",
+            coordinates: [-0.7182, 37.1548],
+            established: 2022,
+            members: "105+",
+            description: "The largest chapter in central Kenya with expansive community outreach programs.",
+            initiatives: [
+                "Mobile legal aid clinics",
+                "School-based environmental education",
+                "Youth mental health forums",
+                "Community period dignity program"
+            ]
+        }, {
+            name: "Masinde Muliro University",
+            chapterName: "Masinde Change Agents",
+            coordinates: [0.5950, 34.7784],
+            established: 2023,
+            members: "70+",
+            description: "Focus on cross-border environmental initiatives in Western Kenya.",
+            initiatives: [
+                "Trans-boundary resource management",
+                "Environmental peace-building",
+                "Community mental health outreach",
+                "School sanitation improvement"
+            ]
+        }, {
+            name: "Daystar University",
+            chapterName: "Daystar Advocates",
+            coordinates: [-1.4246, 36.9561],
+            established: 2022,
+            members: "55+",
+            description: "Media and communications focus for advocacy campaigns.",
+            initiatives: [
+                "Media literacy programs",
+                "Digital advocacy training",
+                "Environmental storytelling",
+                "Digital mental health resources"
+            ]
+        }, {
+            name: "University of Eldoret",
+            chapterName: "Eldoret Synergy Leaders",
+            coordinates: [0.5308, 35.2825],
+            established: 2023,
+            members: "85+",
+            description: "Serving the North Rift region with a focus on sports and wellbeing.",
+            initiatives: [
+                "Athlete mental health support",
+                "Sports for environmental awareness",
+                "Youth legal empowerment",
+                "Rural menstrual health outreach"
+            ]
+        }, {
+            name: "Machakos University",
+            chapterName: "Machakos Change Hub",
+            coordinates: [-1.5179, 37.2627],
+            established: 2023,
+            members: "60+",
+            description: "Addressing drought resilience and water conservation in Eastern Kenya.",
+            initiatives: [
+                "Water rights education",
+                "Drought-resistant planting",
+                "Rural mental health support",
+                "Girls' education advocacy"
+            ]
+        }, {
+            name: "Multimedia University",
+            chapterName: "MMU Digital Advocates",
+            coordinates: [-1.3758, 36.7334],
+            established: 2021,
+            members: "75+",
+            description: "Leveraging digital media for social change campaigns.",
+            initiatives: [
+                "Digital storytelling for advocacy",
+                "Online legal information hub",
+                "Virtual mental health resources",
+                "Social media activism training"
+            ]
+        }, {
+            name: "Technical University of Mombasa",
+            chapterName: "TUM Coastal Guardians",
+            coordinates: [-4.0435, 39.6682],
+            established: 2022,
+            members: "80+",
+            description: "Coastal conservation and marine ecosystem protection initiatives.",
+            initiatives: [
+                "Beach clean-up campaigns",
+                "Marine conservation law awareness",
+                "Coastal community mental health",
+                "Girls in coastal education program"
+            ]
+        }];
+
+        // Define marker colors based on establishment year
+        function getMarkerColor(year) {
+            if (year === 2021) return '#ff7700'; // Original - Orange
+            if (year === 2022) return '#1e3a8a'; // Expansion - Dark Blue
+            if (year === 2023) return '#10b981'; // New - Green
+            return '#64748b'; // Default
+        }
+
+        // Create and add markers for each university
+        universities.forEach(university => {
+                    // Create custom icon with color based on establishment year
+                    const markerIcon = L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background-color: ${getMarkerColor(university.established)}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+
+                    // Create popup content
+                    const popupContent = `
+                <div class="university-info">
+                    <h2>${university.name}</h2>
+                    <div class="university-meta">
+                        <div class="university-meta-item">
+                            <span><strong>Chapter:</strong> ${university.chapterName}</span>
+                        </div>
+                        <div class="university-meta-item">
+                            <span><strong>Est:</strong> ${university.established}</span>
+                        </div>
+                        <div class="university-meta-item">
+                            <span><strong>Members:</strong> ${university.members}</span>
+                        </div>
+                    </div>
+                    <p>${university.description}</p>
+                    <div class="university-initiatives">
+                        <h3>Key Initiatives:</h3>
+                        <ul class="initiative-list">
+                            ${university.initiatives.map(initiative => `<li>${initiative}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            // Add marker with popup to map
+            L.marker(university.coordinates, {icon: markerIcon})
+                .addTo(map)
+                .bindPopup(popupContent);
+        });
+    </script>
+
+</body>
+
+</html>

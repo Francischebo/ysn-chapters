@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog & Stories | Youth Synergy Network</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
+    <style>
+        /* Base Styles */
+        
+         :root {
+            --primary: #ff7700;
+            --secondary: #1e3a8a;
+            --accent: #10b981;
+            --light: #f8fafc;
+            --dark: #0f172a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        /* Utility Classes */
+        
+        .container {
+            width: 100%;
+            max-width: 95%;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e05f00;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #15296b;
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        /* Header Styles */
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo img {
+            height: 50px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            font-weight: 500;
+            color: var(--dark);
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        nav a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        /* Blog Hero Section */
+        
+        .blog-hero {
+            margin-top: 86px;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://picsum.photos/1600/800') center/cover no-repeat;
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+        }
+        
+        .blog-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .blog-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .blog-hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        /* Section Styles */
+        
+        .section {
+            padding: 5rem 0;
+        }
+        
+        .section-alt {
+            background-color: #f1f5f9;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            color: #64748b;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        /* Blog Overview */
+        
+        .blog-overview {
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+        /* Blog Categories */
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        
+        .category-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .category-image {
+            height: 160px;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .category-image .icon {
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .category-content {
+            padding: 1.5rem;
+        }
+        
+        .category-content h3 {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .category-content p {
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+        
+        .category-example {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-top: 0.75rem;
+        }
+        /* Featured Stories */
+        
+        .featured-stories {
+            margin-bottom: 4rem;
+        }
+        
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .story-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .story-image {
+            height: 200px;
+            background-color: #f1f5f9;
+            position: relative;
+        }
+        
+        .story-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .story-content {
+            padding: 1.5rem;
+        }
+        
+        .story-content h3 {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+        
+        .story-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .story-excerpt {
+            margin-bottom: 1.5rem;
+        }
+        
+        .read-more {
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        /* Contributor Section */
+        
+        .contributor-section {
+            background-color: #f1f5f9;
+            padding: 3rem;
+            border-radius: 0.5rem;
+            margin-bottom: 4rem;
+        }
+        
+        .contributor-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .contributor-content h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .contributor-types {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .contributor-type {
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .submission-steps {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: left;
+        }
+        
+        .submission-steps ol {
+            list-style-position: inside;
+            margin-bottom: 1.5rem;
+        }
+        
+        .submission-steps li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .contributor-rewards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .reward-item {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .reward-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        /* Multimedia Section */
+        
+        .multimedia-section {
+            margin-bottom: 4rem;
+        }
+        
+        .media-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .media-type {
+            background-color: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .media-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .media-type h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .media-description {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+        /* Search & Filter */
+        
+        .search-filter-section {
+            margin-bottom: 4rem;
+        }
+        
+        .search-filter-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .search-container {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem 0 0 0.375rem;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 0.375rem 0.375rem 0;
+            padding: 0 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background-color: #e05f00;
+        }
+        
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+        
+        .filter-group select {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .tag {
+            background-color: #e2e8f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tag:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        /* Featured Story Widgets */
+        
+        .featured-widgets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .widget {
+            background-color: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .widget-header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        .widget-content {
+            padding: 1.5rem;
+        }
+        
+        .widget-story {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .widget-story:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .widget-story-img {
+            width: 60px;
+            height: 60px;
+            background-color: #f1f5f9;
+            border-radius: 0.375rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .widget-story-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .widget-story-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        
+        .story-map {
+            height: 300px;
+            background-color: #f1f5f9;
+            border-radius: 0.375rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+        .map-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .map-header h1 {
+            font-size: 2rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .map-header p {
+            color: #64748b;
+        }
+        
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .legend {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 1.5rem;
+        }
+        
+        .legend h3 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .legend-label {
+            font-size: 0.9rem;
+        }
+        .university-info h2 {
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        
+        .university-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .university-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .university-initiatives {
+            margin-top: 0.75rem;
+        }
+        
+        .university-initiatives h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+        
+        .initiative-list {
+            list-style: none;
+        }
+        
+        .initiative-list li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.3rem;
+        }
+        
+        .initiative-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff7700;
+            font-weight: bold;
+        }
+        /* CTA Section */
+        
+        .cta-section {
+            text-align: center;
+            padding: 5rem 0;
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-content p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        /* Footer */
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-logo img {
+            height: 40px;
+        }
+        
+        .footer-logo h2 {
+            font-size: 1.25rem;
+        }
+        
+        .footer-about p {
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-links {
+            display: block;
+            gap: 1rem;
+        }
+        
+        .social-icon {
+            display: block;
+            align-items: center;
+            justify-content: left;
+            padding: 5px;
+            width: 55%;
+            height: 5%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5%;
+            transition: background-color 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary);
+        }
+        
+        .footer-links h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+        
+        .footer-subscribe h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-subscribe p {
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .subscribe-form {
+            display: flex;
+            max-width: 300px;
+        }
+        
+        .subscribe-input {
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.375rem 0 0 0.375rem;
+            outline: none;
+            font-size: 0.875rem;
+        }
+        
+        .subscribe-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 0.375rem 0.375rem 0;
+            padding: 0 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .subscribe-btn:hover {
+            background-color: #e05f00;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.6;
+            font-size: 0.875rem;
+        }
+        /* Responsive Styles */
+        
+        @media (max-width: 992px) {
+            .blog-hero h1 {
+                font-size: 2.5rem;
+            }
+            .section-header h2 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul,
+            .nav-buttons {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .blog-hero {
+                margin-top: 70px;
+                padding: 4rem 0;
+            }
+            .blog-hero h1 {
+                font-size: 2rem;
+            }
+            .blog-hero p {
+                font-size: 1.125rem;
+            }
+            .section-header h2 {
+                font-size: 1.75rem;
+            }
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+            .featured-widgets {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 0.75rem;
+            }
+            .logo img {
+                height: 40px;
+            }
+            .logo h1 {
+                font-size: 1.25rem;
+            }
+            .blog-hero {
+                margin-top: 60px;
+                padding: 3rem 0;
+            }
+            .blog-hero h1 {
+                font-size: 1.75rem;
+            }
+            .section {
+                padding: 3rem 0;
+            }
+            .contributor-types {
+                flex-direction: column;
+            }
+            .filter-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="assets/images/ysn-logo.jpg" alt="YSN Logo">
+                <h1>Youth Synergy Network</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="programs.html">Programs</a></li>
+                    <li><a href="program-details.html">Impacts</a></li>
+                    <li><a href="chapters.html">Chapters</a></li>
+                    <li><a href="leadership.html">Leadership</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="media.html">Media</a></li>
+                    <li><a href="news.html">News</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="resources.html">Resources</a></li>
+                    <li><a href="testimonials.html">Testimonials</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li class="nav-buttons"><a href="donate.html" class="btn btn-outline">Donate</a></li>
+                    <li class="nav-buttons"><a href="join-us.html" class="btn btn-primary">Join Us</a></li>
+                </ul>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Blog Hero Section -->
+    <section class="blog-hero">
+        <div class="container">
+            <div class="blog-hero-content">
+                <h1>Blog & Stories</h1>
+                <p>Amplifying youth voices, documenting grassroots innovations, and inviting critical reflection across Kenya's socio-legal and developmental landscape.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Overview Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Storytelling Platform</h2>
+            </div>
+            <div class="blog-overview">
+                <p>The YSN Blog & Stories section is a dynamic storytelling platform where young people share powerful narratives of impact, legal insights, climate advocacy, mental health breakthroughs, and mentorship journeys. It also features opinion
+                    pieces, guest columns, and real-life testimonials from schools, universities, and communities touched by the Youth Synergy Network.</p>
+            </div>
+
+            <!-- Story Categories -->
+            <div class="section-header">
+                <h2>Story Categories</h2>
+                <p>Explore powerful narratives across these key areas</p>
+            </div>
+
+            <div class="categories-grid">
+                <!-- Category 1 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">✨</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Impact Stories</h3>
+                        <p>Real-life testimonials from beneficiaries, volunteers, and partner institutions highlighting successes in legal literacy, sanitary dignity, climate resilience, and mental wellness.</p>
+                        <div class="category-example">Example: "From Silence to Healing: My Journey in a YSN Healing Circle"</div>
+                    </div>
+                </div>
+
+                <!-- Category 2 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">🎓</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Campus Chronicles</h3>
+                        <p>Student reflections on running YSN chapters in Kenyan universities, leadership lessons, campus projects, and law school experiences.</p>
+                        <div class="category-example">Example: "Mobilizing a Million Trees: Inside the UoN Green Chapter"</div>
+                    </div>
+                </div>
+
+                <!-- Category 3 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">🗣️</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Voices of the Marginalized</h3>
+                        <p>Stories from youth in rural or underserved communities featuring challenges faced and how YSN interventions made a difference.</p>
+                        <div class="category-example">Example: "I Skipped School for Periods — Not Anymore"</div>
+                    </div>
+                </div>
+
+                <!-- Category 4 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">⚖️</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Legal Diaries</h3>
+                        <p>Youth-friendly summaries of landmark rulings, legal trends, and civic education topics with guest legal opinions by law students and faculty.</p>
+                        <div class="category-example">Example: "Why the Housing Levy Case Matters to Kenya's Youth"</div>
+                    </div>
+                </div>
+
+                <!-- Category 5 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">🌱</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Climate & Environmental Justice Logs</h3>
+                        <p>Local stories on climate change, deforestation, clean-up drives, and eco-activism highlighting youth as defenders of rivers, forests, and wetlands.</p>
+                        <div class="category-example">Example: "Planting Memory: Reclaiming Sacred Forests in Kisii"</div>
+                    </div>
+                </div>
+
+                <!-- Category 6 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">🧠</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Mental Health Reflections</h3>
+                        <p>Youth-authored stories on anxiety, depression, self-awareness, and therapy with testimonies from healing circles and campus wellness programs.</p>
+                        <div class="category-example">Example: "What Mental Health Means to a First-Year Student from Mandera"</div>
+                    </div>
+                </div>
+
+                <!-- Category 7 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">🤝</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Mentorship Diaries</h3>
+                        <p>Letters from mentees and mentors with school visits documented with heartfelt impact.</p>
+                        <div class="category-example">Example: "How a Visit from YSN Changed My KCSE Attitude"</div>
+                    </div>
+                </div>
+
+                <!-- Category 8 -->
+                <div class="category-card">
+                    <div class="category-image">
+                        <div class="icon">✍️</div>
+                    </div>
+                    <div class="category-content">
+                        <h3>Guest Columns</h3>
+                        <p>Lawyers, academics, psychologists, and activists share insights on topics like constitutionalism, youth reform, menstrual health policies, etc.</p>
+                        <div class="category-example">Example: "Decolonizing Menstrual Health: A Gender Lawyer's Perspective"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Stories Section -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Stories</h2>
+                <p>Explore impactful narratives from our community</p>
+            </div>
+
+            <div class="featured-stories">
+                <div class="story-grid">
+                    <!-- Story 1 -->
+                    <div class="story-card">
+                        <div class="story-image">
+                            <div class="story-category">Impact Stories</div>
+                        </div>
+                        <div class="story-content">
+                            <h3>From Silence to Healing: My Journey in a YSN Healing Circle</h3>
+                            <div class="story-meta">
+                                <span>May 15, 2024</span>
+                                <span>By Wanjiku Kamau</span>
+                            </div>
+                            <p class="story-excerpt">When I joined the healing circle at Kenyatta University, I hadn't spoken about my anxiety to anyone. Six weeks later, I found my voice and a community that truly understood...</p>
+                            <a href="#" class="read-more">Read full story →</a>
+                        </div>
+                    </div>
+
+                    <!-- Story 2 -->
+                    <div class="story-card">
+                        <div class="story-image">
+                            <div class="story-category">Legal Diaries</div>
+                        </div>
+                        <div class="story-content">
+                            <h3>Why the Housing Levy Case Matters to Kenya's Youth</h3>
+                            <div class="story-meta">
+                                <span>April 28, 2024</span>
+                                <span>By James Omondi</span>
+                            </div>
+                            <p class="story-excerpt">The recent Constitutional Court ruling on Kenya's housing levy has significant implications for young professionals. Here's what you need to know about your rights and financial future...</p>
+                            <a href="#" class="read-more">Read full story →</a>
+                        </div>
+                    </div>
+
+                    <!-- Story 3 -->
+                    <div class="story-card">
+                        <div class="story-image">
+                            <div class="story-category">Climate Justice</div>
+                        </div>
+                        <div class="story-content">
+                            <h3>Planting Memory: Reclaiming Sacred Forests in Kisii</h3>
+                            <div class="story-meta">
+                                <span>April 10, 2024</span>
+                                <span>By Moraa Nyaboke</span>
+                            </div>
+                            <p class="story-excerpt">How our university chapter partnered with elders to restore indigenous trees and traditional knowledge about sacred groves threatened by deforestation...</p>
+                            <a href="#" class="read-more">Read full story →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contributor Guidelines Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contributor Guidelines</h2>
+                <p>Share your story with our community</p>
+            </div>
+
+            <div class="contributor-section">
+                <div class="contributor-content">
+                    <h3>Who Can Write?</h3>
+                    <div class="contributor-types">
+                        <div class="contributor-type">University students</div>
+                        <div class="contributor-type">High school students (with teacher clearance)</div>
+                        <div class="contributor-type">Faculty members</div>
+                        <div class="contributor-type">Community leaders</div>
+                        <div class="contributor-type">Mental health professionals</div>
+                        <div class="contributor-type">Legal practitioners</div>
+                    </div>
+
+                    <h3>How to Submit:</h3>
+                    <div class="submission-steps">
+                        <ol>
+                            <li>Submit article via the "Contribute a Story" form</li>
+                            <li>Upload Word document or paste story into the form</li>
+                            <li>Optional: Attach high-resolution photos (with consent)</li>
+                        </ol>
+                        <p>Each piece is reviewed and edited by YSN Editorial Board</p>
+                    </div>
+
+                    <h3>Length & Format:</h3>
+                    <p>500–1,200 words<br> Conversational and youth-friendly tone<br> Use real names only with consent</p>
+
+                    <h3>Rewards for Contributors:</h3>
+                    <div class="contributor-rewards">
+                        <div class="reward-item">
+                            <div class="reward-icon">🌟</div>
+                            <p>Stories featured on homepage</p>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-icon">📜</div>
+                            <p>Digital certificate of publication</p>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-icon">📖</div>
+                            <p>Feature in Voices of Synergy print magazine</p>
+                        </div>
+                        <div class="reward-item">
+                            <div class="reward-icon">🎤</div>
+                            <p>Consideration for Storytelling Ambassador role</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="#" class="btn btn-primary">Contribute a Story</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multimedia Integration Section -->
+    <section class="section section-alt">
+        <div class="container multimedia-section">
+            <div class="section-header">
+                <h2>Multimedia Integration</h2>
+                <p>Explore stories through different media formats</p>
+            </div>
+
+            <div class="media-types">
+                <!-- Photo Stories -->
+                <div class="media-type">
+                    <div class="media-icon">📸</div>
+                    <h3>Photo Stories</h3>
+                    <p class="media-description">Visual storytelling galleries from field missions and events, "Before & After" transformation timelines, and captioned albums for key programs.</p>
+                    <a href="#" class="btn btn-outline">Browse Galleries</a>
+                </div>
+
+                <!-- Video Diaries -->
+                <div class="media-type">
+                    <div class="media-icon">🎥</div>
+                    <h3>Video Diaries</h3>
+                    <p class="media-description">Short films, interviews, spoken word performances, university chapter video projects, and "A Day with YSN" miniseries by campus creators.</p>
+                    <a href="#" class="btn btn-outline">Watch Videos</a>
+                </div>
+
+                <!-- Audio Stories -->
+                <div class="media-type">
+                    <div class="media-icon">🎧</div>
+                    <h3>Audio Stories</h3>
+                    <p class="media-description">"Synergy Voices" Podcast featuring legal explainers, mental health talks, guest spotlights and live Q&A sessions.</p>
+                    <a href="#" class="btn btn-outline">Listen Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Story Widgets Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Story Widgets</h2>
+                <p>Curated collections from our storytelling platform</p>
+            </div>
+
+            <div class="featured-widgets">
+                <!-- Widget 1: Story of the Week -->
+                <div class="widget">
+                    <div class="widget-header">Story of the Week</div>
+                    <div class="widget-content">
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>I Skipped School for Periods — Not Anymore</h4>
+                                <div class="widget-story-meta">
+                                    <span>April 14, 2024</span> | <span>By Faith Mutisya</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p>A powerful testimony from a student in Makueni County on how the Period Dignity Project transformed her education journey.</p>
+                        <a href="#" class="read-more">Read full story →</a>
+                    </div>
+                </div>
+
+                <!-- Widget 2: Top 5 Most Read -->
+                <div class="widget">
+                    <div class="widget-header">Top 5 Most Read</div>
+                    <div class="widget-content">
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>From Silence to Healing: My Journey in a YSN Healing Circle</h4>
+                                <div class="widget-story-meta">
+                                    <span>2,453 views</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>Why the Housing Levy Case Matters to Kenya's Youth</h4>
+                                <div class="widget-story-meta">
+                                    <span>1,892 views</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>Mobilizing a Million Trees: Inside the UoN Green Chapter</h4>
+                                <div class="widget-story-meta">
+                                    <span>1,754 views</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>I Skipped School for Periods — Not Anymore</h4>
+                                <div class="widget-story-meta">
+                                    <span>1,621 views</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>Decolonizing Menstrual Health: A Gender Lawyer's Perspective</h4>
+                                <div class="widget-story-meta">
+                                    <span>1,508 views</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 3: From the Archive -->
+                <div class="widget">
+                    <div class="widget-header">From the Archive</div>
+                    <div class="widget-content">
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>How We Started the First YSN Chapter at University of Nairobi</h4>
+                                <div class="widget-story-meta">
+                                    <span>June 12, 2022</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>Youth-Led Law Clinic Helps 500 Access Justice in Kibera</h4>
+                                <div class="widget-story-meta">
+                                    <span>March 3, 2023</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget-story">
+                            <div class="widget-story-img"></div>
+                            <div class="widget-story-content">
+                                <h4>First National Youth Synergy Conference: Key Takeaways</h4>
+                                <div class="widget-story-meta">
+                                    <span>August 18, 2023</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Story Map -->
+            <div>
+                <p>Explore stories across Kenya - interactive map showing story origin by county/university</p>
+                <div>
+                    <div class="map-header">
+                        <h1>Youth Synergy Network University Chapters</h1>
+                        <p>Explore stories across Kenya - interactive map showing story origin by county/university</p>
+                    </div>
+            
+                    <div id="map"></div>
+            
+                    <div class="legend">
+                        <h3>Chapter Establishment Timeline</h3>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #ff7700;"></div>
+                                <div class="legend-label">Original Chapters (Est. 2021)</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #1e3a8a;"></div>
+                                <div class="legend-label">Expansion Chapters (Est. 2022)</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #10b981;"></div>
+                                <div class="legend-label">New Chapters (Est. 2023)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Search & Filter Section -->
+    <section class="section section-alt search-filter-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Blog Search & Filter Tools</h2>
+                <p>Find the stories that matter to you</p>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-container">
+                    <input type="text" placeholder="Search for stories..." class="search-input">
+                    <button class="search-btn">Search</button>
+                </div>
+
+                <div class="filter-options">
+                    <!-- Category Filter -->
+                    <div class="filter-group">
+                        <label for="category">Category</label>
+                        <select id="category">
+                            <option value="">All Categories</option>
+                            <option value="impact">Impact Stories</option>
+                            <option value="campus">Campus Chronicles</option>
+                            <option value="voices">Voices of the Marginalized</option>
+                            <option value="legal">Legal Diaries</option>
+                            <option value="climate">Climate & Environmental Justice</option>
+                            <option value="mental">Mental Health Reflections</option>
+                            <option value="mentorship">Mentorship Diaries</option>
+                            <option value="guest">Guest Columns</option>
+                        </select>
+                    </div>
+
+                    <!-- Region Filter -->
+                    <div class="filter-group">
+                        <label for="region">Region</label>
+                        <select id="region">
+                            <option value="">All Regions</option>
+                            <option value="nairobi">Nairobi County</option>
+                            <option value="kisumu">Kisumu County</option>
+                            <option value="mombasa">Mombasa County</option>
+                            <option value="uon">University of Nairobi</option>
+                            <option value="ku">Kenyatta University</option>
+                            <option value="strathmore">Strathmore University</option>
+                        </select>
+                    </div>
+
+                    <!-- Year Filter -->
+                    <div class="filter-group">
+                        <label for="year">Year</label>
+                        <select id="year">
+                            <option value="">All Years</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                        </select>
+                    </div>
+
+                    <!-- Language Filter -->
+                    <div class="filter-group">
+                        <label for="language">Language</label>
+                        <select id="language">
+                            <option value="">All Languages</option>
+                            <option value="english">English</option>
+                            <option value="kiswahili">Kiswahili</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Popular Tags -->
+                <div class="filter-group">
+                    <label>Popular Tags</label>
+                    <div class="tags-container">
+                        <div class="tag">#ClimateJustice</div>
+                        <div class="tag">#PeriodDignity</div>
+                        <div class="tag">#LegalAid</div>
+                        <div class="tag">#MentalHealth</div>
+                        <div class="tag">#YouthAdvocacy</div>
+                        <div class="tag">#UniversityChapters</div>
+                        <div class="tag">#KenyaYouth</div>
+                        <div class="tag">#SocialJustice</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Share Your Story with Us</h2>
+                <p>Your experiences and insights matter. Join our community of storytellers and help inspire change across Kenya.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">Contribute a Story</a>
+                    <a href="join-us.html" class="btn btn-outline">Join Our Network</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container ">
+            <div class="footer-content ">
+                <div class="footer-about ">
+                    <div class="footer-logo ">
+                        <img src="assets/images/ysn-logo.jpg " alt="YSN Logo ">
+                        <h2>Youth Synergy Network</h2>
+                    </div>
+                    <p>Empowering youth to become leaders in legal literacy, climate action, mental health awareness, and community service.</p>
+                    <h3>Social Media Links</h3>
+                    <div class="social-links ">
+                        <a href="https://www.facebook.com/profile.php?id=61575320623640" class="social-icon ">Facebook</a>
+                        <a href="# " class="social-icon ">X Platform</a>
+                        <a href="https://www.linkedin.com/in/youth-synergy-network-51b538362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-icon ">LinkedIn</a>
+                        <a href="tiktok.com/@youth.synergy.net" class="social-icon ">Tiktok</a>
+                        <a href="https://www.instagram.com/youth_synergynework?igsh=Mmx1eHM4NGdycjFu" class="social-icon ">Instagram</a>
+                    </div>
+                </div>
+
+                <div class="footer-links ">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html ">Home</a></li>
+                        <li><a href="about.html ">About Us</a></li>
+                        <li><a href="programs.html ">Overview Programs</a></li>
+                        <li><a href="program-details.html ">Detailed Programs</a></li>
+                        <li><a href="leadership.html ">Leadership</a></li>
+                        <li><a href="chapters.html ">University Chapters</a></li>
+                        <li><a href="events.html ">Events</a></li>
+                        <li><a href="resources.html ">Resources</a></li>
+                        <li><a href="media.html ">Media Center</a></li>
+                        <li><a href="blog.html ">Blog</a></li>
+                        <li><a href="contact.html ">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links ">
+                    <h3>Programs</h3>
+                    <ul>
+                        <li><a href="# ">Legal Literacy</a></li>
+                        <li><a href="# ">Mental Health</a></li>
+                        <li><a href="# ">Climate Action</a></li>
+                        <li><a href="# ">Mentorship</a></li>
+                        <li><a href="# ">Sanitary Dignity</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-subscribe ">
+                    <h3>Stay Updated</h3>
+                    <p>Subscribe to our newsletter for updates on our programs and impact stories.</p>
+                    <form class="subscribe-form ">
+                        <input type="email " class="subscribe-input " placeholder="Your email address ">
+                        <button type="submit " class="subscribe-btn ">→</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom ">
+                <p>&copy; 2025 Youth Synergy Network. All Rights Reserved.</p>
+                <p>Developer: Francis(<i><a href="mtechspacesolutions@gmail.com">Mobet Tech Space Solutions. Click to email them.</a></i>)</p>
+            </div>
+        </div>
+    </footer>
+    <script src="js/main.js"></script>
+
+    <script>
+        // Mobile menu functionality
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            // Mobile menu implementation would go here
+            alert('Mobile menu clicked - functionality to be implemented');
+        });
+    </script>
+    <script>
+        // Initialize map centered on Kenya
+        const map = L.map('map').setView([-1.2921, 36.8219], 7);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Define university chapter data with coordinates, establishment years, and other info
+        const universities = [{
+            name: "University of Nairobi",
+            chapterName: "UoN Synergy Chapter",
+            coordinates: [-1.2800, 36.8219],
+            established: 2021,
+            members: "150+",
+            description: "The flagship chapter with a strong focus on constitutional literacy and environmental law advocacy.",
+            initiatives: [
+                "Weekly legal literacy clinics",
+                "Campus tree planting campaign",
+                "Mental health peer counseling",
+                "High school mentorship program"
+            ]
+        }, {
+            name: "Kenyatta University",
+            chapterName: "KU Synergy Leaders",
+            coordinates: [-1.1799, 36.9355],
+            established: 2022,
+            members: "120+",
+            description: "Known for their innovative approach to period dignity and menstrual health education.",
+            initiatives: [
+                "Monthly sanitary pad drives",
+                "Gender rights awareness forums",
+                "Environmental justice campaigns",
+                "Community legal aid outreach"
+            ]
+        }, {
+            name: "Strathmore University",
+            chapterName: "Strathmore Synergy Hub",
+            coordinates: [-1.3116, 36.8110],
+            established: 2022,
+            members: "85+",
+            description: "Leveraging the university's strength in business and law, focused on legal entrepreneurship.",
+            initiatives: [
+                "Legal innovation hackathons",
+                "Climate leadership academy",
+                "Corporate sustainability partnerships",
+                "Mental wellness workshops"
+            ]
+        }, {
+            name: "Moi University",
+            chapterName: "Moi YSN Chapter",
+            coordinates: [0.5143, 35.2715],
+            established: 2023,
+            members: "95+",
+            description: "Spearheading rural outreach initiatives with strong connections to schools in Eldoret.",
+            initiatives: [
+                "Rural school adoption program",
+                "Mental health healing circles",
+                "Indigenous environmental knowledge preservation",
+                "Constitutional literacy in mother tongues"
+            ]
+        }, {
+            name: "Jomo Kenyatta University",
+            chapterName: "JKUAT Synergy Hub",
+            coordinates: [-1.0922, 37.0127],
+            established: 2021,
+            members: "110+",
+            description: "Utilizes technology and innovation to address environmental challenges.",
+            initiatives: [
+                "Tech for climate solutions",
+                "Digital legal literacy apps",
+                "Engineering for sustainable communities",
+                "Mental health technology solutions"
+            ]
+        }, {
+            name: "Maseno University",
+            chapterName: "Maseno Change Makers",
+            coordinates: [0.0075, 34.5997],
+            established: 2022,
+            members: "75+",
+            description: "Located in western Kenya focusing on community initiatives around Lake Victoria.",
+            initiatives: [
+                "Lake Victoria conservation efforts",
+                "Rural legal awareness campaigns",
+                "Adolescent mental health support",
+                "Girls education advocacy"
+            ]
+        }, {
+            name: "Egerton University",
+            chapterName: "Egerton Environmental Leaders",
+            coordinates: [-0.3672, 35.9283],
+            established: 2021,
+            members: "90+",
+            description: "Agricultural and environmental focus leveraging the university's research capabilities.",
+            initiatives: [
+                "Sustainable farming practices",
+                "Food security legal frameworks",
+                "Rural environmental justice",
+                "Farmer mental health outreach"
+            ]
+        }, {
+            name: "Technical University of Kenya",
+            chapterName: "TUK Innovators",
+            coordinates: [-1.2929, 36.8172],
+            established: 2023,
+            members: "65+",
+            description: "Bringing technical solutions to social challenges with engineering innovation.",
+            initiatives: [
+                "Eco-friendly design competitions",
+                "Reusable sanitary product innovation",
+                "Legal tech hackathons",
+                "Engineering for mental health"
+            ]
+        }, {
+            name: "Mount Kenya University",
+            chapterName: "MKU Synergy Chapter",
+            coordinates: [-0.7182, 37.1548],
+            established: 2022,
+            members: "105+",
+            description: "The largest chapter in central Kenya with expansive community outreach programs.",
+            initiatives: [
+                "Mobile legal aid clinics",
+                "School-based environmental education",
+                "Youth mental health forums",
+                "Community period dignity program"
+            ]
+        }, {
+            name: "Masinde Muliro University",
+            chapterName: "Masinde Change Agents",
+            coordinates: [0.5950, 34.7784],
+            established: 2023,
+            members: "70+",
+            description: "Focus on cross-border environmental initiatives in Western Kenya.",
+            initiatives: [
+                "Trans-boundary resource management",
+                "Environmental peace-building",
+                "Community mental health outreach",
+                "School sanitation improvement"
+            ]
+        }, {
+            name: "Daystar University",
+            chapterName: "Daystar Advocates",
+            coordinates: [-1.4246, 36.9561],
+            established: 2022,
+            members: "55+",
+            description: "Media and communications focus for advocacy campaigns.",
+            initiatives: [
+                "Media literacy programs",
+                "Digital advocacy training",
+                "Environmental storytelling",
+                "Digital mental health resources"
+            ]
+        }, {
+            name: "University of Eldoret",
+            chapterName: "Eldoret Synergy Leaders",
+            coordinates: [0.5308, 35.2825],
+            established: 2023,
+            members: "85+",
+            description: "Serving the North Rift region with a focus on sports and wellbeing.",
+            initiatives: [
+                "Athlete mental health support",
+                "Sports for environmental awareness",
+                "Youth legal empowerment",
+                "Rural menstrual health outreach"
+            ]
+        }, {
+            name: "Machakos University",
+            chapterName: "Machakos Change Hub",
+            coordinates: [-1.5179, 37.2627],
+            established: 2023,
+            members: "60+",
+            description: "Addressing drought resilience and water conservation in Eastern Kenya.",
+            initiatives: [
+                "Water rights education",
+                "Drought-resistant planting",
+                "Rural mental health support",
+                "Girls' education advocacy"
+            ]
+        }, {
+            name: "Multimedia University",
+            chapterName: "MMU Digital Advocates",
+            coordinates: [-1.3758, 36.7334],
+            established: 2021,
+            members: "75+",
+            description: "Leveraging digital media for social change campaigns.",
+            initiatives: [
+                "Digital storytelling for advocacy",
+                "Online legal information hub",
+                "Virtual mental health resources",
+                "Social media activism training"
+            ]
+        }, {
+            name: "Technical University of Mombasa",
+            chapterName: "TUM Coastal Guardians",
+            coordinates: [-4.0435, 39.6682],
+            established: 2022,
+            members: "80+",
+            description: "Coastal conservation and marine ecosystem protection initiatives.",
+            initiatives: [
+                "Beach clean-up campaigns",
+                "Marine conservation law awareness",
+                "Coastal community mental health",
+                "Girls in coastal education program"
+            ]
+        }];
+
+        // Define marker colors based on establishment year
+        function getMarkerColor(year) {
+            if (year === 2021) return '#ff7700'; // Original - Orange
+            if (year === 2022) return '#1e3a8a'; // Expansion - Dark Blue
+            if (year === 2023) return '#10b981'; // New - Green
+            return '#64748b'; // Default
+        }
+
+        // Create and add markers for each university
+        universities.forEach(university => {
+                    // Create custom icon with color based on establishment year
+                    const markerIcon = L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background-color: ${getMarkerColor(university.established)}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+
+                    // Create popup content
+                    const popupContent = `
+                <div class="university-info">
+                    <h2>${university.name}</h2>
+                    <div class="university-meta">
+                        <div class="university-meta-item">
+                            <span><strong>Chapter:</strong> ${university.chapterName}</span>
+                        </div>
+                        <div class="university-meta-item">
+                            <span><strong>Est:</strong> ${university.established}</span>
+                        </div>
+                        <div class="university-meta-item">
+                            <span><strong>Members:</strong> ${university.members}</span>
+                        </div>
+                    </div>
+                    <p>${university.description}</p>
+                    <div class="university-initiatives">
+                        <h3>Key Initiatives:</h3>
+                        <ul class="initiative-list">
+                            ${university.initiatives.map(initiative => `<li>${initiative}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            // Add marker with popup to map
+            L.marker(university.coordinates, {icon: markerIcon})
+                .addTo(map)
+                .bindPopup(popupContent);
+        });
+    </script>
+</body>
+
+</html>
