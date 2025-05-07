@@ -1,4 +1,17 @@
 {
+    "name": "ysn-chapters",
+    "version": "1.0.0",
+    "main": "join-us/public/index.html",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node join-us/public/index.html",
+        "dev": "nodemon join-us/public/index.html",
+
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
   "dependencies": {
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
